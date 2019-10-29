@@ -188,9 +188,9 @@ public class App {
                         "SELECT ?x\n" +
                         "WHERE {\n" +
                         "      ?x a ns:Accident .\n" +
-                        "      ?x ns:#date ?date .\n" +
-                        "      FILTER (xsd:dateTime(?date) >= \"2019-" + mes + "-01T00:00Z\"^^xsd:dateTime && " +
-                        "xsd:dateTime(?date) < \"2019-" + mes + "-30T23:59ZZ\"^^xsd:dateTime)\n" +
+                        "      ?x ns:date ?date .\n" +
+                        "      FILTER (?date >= \"2019-" + mes + "-01T00:00Z\"^^xsd:dateTime && " +
+                        "?date < \"2019-" + mes + "-30T23:59ZZ\"^^xsd:dateTime)\n" +
                         "      }";
 
         System.out.println(queryString);
@@ -244,6 +244,6 @@ public class App {
          */
 
         App test = new App();
-        test.neighborhoodAccidents(model);
+        test.monthAccidents(model);
     }
 }
