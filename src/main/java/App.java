@@ -18,12 +18,12 @@ import org.apache.jena.vocabulary.VCARD;
 
 public class App {
 
-    public static String ns = "http://biciaccident.es/ontology#";
-    public static String owl = "http://www.w3.org/2002/07/owl#";
-    public static String rdf = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
-    public static String rdfs = "http://www.w3.org/2000/01/rdf-schema#";
-    public static String xml = "http://www.w3.org/XML/1998/namespace";
-    public static String xsd = "http://www.w3.org/2001/XMLSchema#";
+    public static String ns = "<http://biciaccident.es/ontology#>";
+    public static String owl = "<http://www.w3.org/2002/07/owl#>";
+    public static String rdf = "<http://www.w3.org/1999/02/22-rdf-syntax-ns#>";
+    public static String rdfs = "<http://www.w3.org/2000/01/rdf-schema#>";
+    public static String xml = "<http://www.w3.org/XML/1998/namespace>";
+    public static String xsd = "<http://www.w3.org/2001/XMLSchema#>";
 
     private Scanner myObj = new Scanner(System.in);
 
@@ -36,9 +36,13 @@ public class App {
         String calle = myObj.nextLine();
 
         String queryString =
+                "PREFIX ns:   " + ns + "\n" +
+                "PREFIX rdfs:   " + rdfs + "\n" +
                 "SELECT DISTINCT ?x WHERE {\n" +
-                        "    ?x a <http://biciaccident.es/ontology#Accident> .\n" +
-                        "    ?x <http://biciaccident.es/ontology#occursOn> <http://biciaccident.es/resource/street/" + calle + "> .\n" +
+                        "    ?x a ns:Accident .\n" +
+                        "    ?x ns:occursOn ?uri .\n" +
+                        "    ?uri a ns:street .\n" +
+                        "    ?uri rdfs:label \"" + calle + "\" .\n" +
                         "}";
 
         Query query = QueryFactory.create(queryString);
@@ -63,10 +67,14 @@ public class App {
         String distrito = myObj.nextLine();
 
         String queryString =
+                "PREFIX ns:   " + ns + "\n" +
+                "PREFIX rdfs:   " + rdfs + "\n" +
                 "SELECT DISTINCT ?x WHERE {\n" +
-                        "    ?x a <http://biciaccident.es/ontology#Accident> .\n" +
-                        "    ?x <http://biciaccident.es/ontology#occursOn> ?district .\n" +
-                        "    ?district <http://biciaccident.es/ontology#locatedIn>  <http://biciaccident.es/resource/neighborhood/" + distrito + "> .\n" +
+                        "    ?x a ns:Accident .\n" +
+                        "    ?x ns:occursOn ?street .\n" +
+                        "    ?street ns:locatedIn ?uri .\n" +
+                        "    ?uri a ns:neighborhood .\n" +
+                        "    ?uri rdfs:label \"" + distrito + "\" .\n" +
                         "}";
 
         Query query = QueryFactory.create(queryString);
@@ -91,9 +99,10 @@ public class App {
         String weather = myObj.nextLine();
 
         String queryString =
+                "PREFIX ns:   " + ns + "\n" +
                 "SELECT DISTINCT ?x WHERE {\n" +
-                        "    ?x a <http://biciaccident.es/ontology#Accident> .\n" +
-                        "    ?x <http://biciaccident.es/ontology#weatherCondition> \"" + weather + "\" .\n" +
+                        "    ?x a ns:Accident .\n" +
+                        "    ?x ns:weatherCondition \"" + weather + "\" .\n" +
                         "}";
 
         Query query = QueryFactory.create(queryString);
@@ -118,9 +127,10 @@ public class App {
         String lesividad = myObj.nextLine();
 
         String queryString =
+                "PREFIX ns:   " + ns + "\n" +
                 "SELECT DISTINCT ?x WHERE {\n" +
-                        "    ?x a <http://biciaccident.es/ontology#Accident> .\n" +
-                        "    ?x <http://biciaccident.es/ontology#injuryStatus> \"" + lesividad +"\" .\n" +
+                        "    ?x a ns:Accident .\n" +
+                        "    ?x ns:injuryStatus \"" + lesividad +"\" .\n" +
                         "}";
 
         Query query = QueryFactory.create(queryString);
@@ -145,9 +155,10 @@ public class App {
         String typeA = myObj.nextLine();
 
         String queryString =
+                "PREFIX ns:   " + ns + "\n" +
                 "SELECT DISTINCT ?x WHERE {\n" +
-                        "    ?x a <http://biciaccident.es/ontology#Accident> .\n" +
-                        "    ?x <http://biciaccident.es/ontology#typeAccident> \"" + typeA +"\" .\n" +
+                        "    ?x a ns:Accident .\n" +
+                        "    ?x ns:typeAccident \"" + typeA +"\" .\n" +
                         "}";
 
         Query query = QueryFactory.create(queryString);
@@ -172,13 +183,15 @@ public class App {
         String mes = myObj.nextLine();
 
         String queryString =
-                "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n\n" +
-                "SELECT DISTINCT ?x WHERE {\n" +
-                        "    ?x a <http://biciaccident.es/ontology#Accident> .\n" +
-                        "    FILTER (xsd:dateTime(?date) >= xsd:dateTime(\"2019-"+ mes +"-01T00:00:00Z\") " +
-                        "&& xsd:dateTime(?date) <= xsd:dateTime(\"2019-" + mes + "-31T23:59:59Z\")) .\n" +
-                        "    ?x <http://biciaccident.es/ontology#date> ?date .\n" +
-                        "}";
+                        "PREFIX ns:   " + ns + "\n" +
+                        "PREFIX xsd:   " + xsd + "\n" +
+                        "SELECT ?x\n" +
+                        "WHERE {\n" +
+                        "      ?x a ns:Accident .\n" +
+                        "      ?x ns:#date ?date .\n" +
+                        "      FILTER (xsd:dateTime(?date) >= \"2019-" + mes + "-01T00:00Z\"^^xsd:dateTime && " +
+                        "xsd:dateTime(?date) < \"2019-" + mes + "-30T23:59ZZ\"^^xsd:dateTime)\n" +
+                        "      }";
 
         System.out.println(queryString);
 
@@ -231,6 +244,6 @@ public class App {
          */
 
         App test = new App();
-        test.monthAccidents(model);
+        test.neighborhoodAccidents(model);
     }
 }
