@@ -28,7 +28,7 @@ public class ExternalQueryMain {
 
             System.out.print(String.format("%-"+size+"."+size+"s", variable ) + " | ");
         }
-        String html = "<HTML>"+rs.+"</HTML>"
+        String html = "<HTML></HTML>";
         System.out.print("\n");
         for (HashMap value : (ArrayList<HashMap>) rs.get("result").get("rows")) {
             for (String variable : (ArrayList<String>) rs.get("result").get("variables")) {
