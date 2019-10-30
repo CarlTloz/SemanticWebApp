@@ -2,6 +2,7 @@ package main.java;
 
 //https://jena.apache.org/documentation/javadoc/
 
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.util.Scanner;
 
@@ -15,6 +16,7 @@ import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Property;
 import org.apache.jena.util.FileManager;
 import org.apache.jena.vocabulary.VCARD;
+import org.json.JSONObject;
 
 public class App {
 
@@ -38,9 +40,9 @@ public class App {
         String queryString =
                 "PREFIX ns:   " + ns + "\n" +
                 "PREFIX rdfs:   " + rdfs + "\n" +
-                "SELECT DISTINCT ?x WHERE {\n" +
-                        "    ?x a ns:Accident .\n" +
-                        "    ?x ns:occursOn ?uri .\n" +
+                "SELECT DISTINCT ?accident WHERE {\n" +
+                        "    ?accident a ns:Accident .\n" +
+                        "    ?accident ns:occursOn ?uri .\n" +
                         "    ?uri a ns:street .\n" +
                         "    ?uri rdfs:label \"" + calle + "\" .\n" +
                         "}";
@@ -52,7 +54,26 @@ public class App {
         ResultSet results = qe.execSelect();
 
         // Output query results
-        ResultSetFormatter.out(System.out, results, query);
+        //ResultSetFormatter.out(System.out, results, query);
+
+        // write to a ByteArrayOutputStream
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+
+        ResultSetFormatter.outputAsJSON(outputStream, results);
+
+        // and turn that into a String
+        String json = new String(outputStream.toByteArray());
+
+        //Now convert to JSONObject
+        JSONObject jsonObject = new JSONObject(json);
+
+        //https://stackoverflow.com/questions/6856120/building-html-in-java-code-only
+        StringBuilder htmlBuilder = new StringBuilder();
+        htmlBuilder.append("<html>");
+        htmlBuilder.append("<head><title>Hello World</title></head>");
+        htmlBuilder.append("<body><p>Look at my body!</p></body>");
+        htmlBuilder.append("</html>");
+        String html = htmlBuilder.toString();
 
         // Important ‑ free up resources used running the query
         qe.close();
@@ -69,9 +90,9 @@ public class App {
         String queryString =
                 "PREFIX ns:   " + ns + "\n" +
                 "PREFIX rdfs:   " + rdfs + "\n" +
-                "SELECT DISTINCT ?x WHERE {\n" +
-                        "    ?x a ns:Accident .\n" +
-                        "    ?x ns:occursOn ?street .\n" +
+                "SELECT DISTINCT ?accident WHERE {\n" +
+                        "    ?accident a ns:Accident .\n" +
+                        "    ?accident ns:occursOn ?street .\n" +
                         "    ?street ns:locatedIn ?uri .\n" +
                         "    ?uri a ns:neighborhood .\n" +
                         "    ?uri rdfs:label \"" + distrito + "\" .\n" +
@@ -100,9 +121,9 @@ public class App {
 
         String queryString =
                 "PREFIX ns:   " + ns + "\n" +
-                "SELECT DISTINCT ?x WHERE {\n" +
-                        "    ?x a ns:Accident .\n" +
-                        "    ?x ns:weatherCondition \"" + weather + "\" .\n" +
+                "SELECT DISTINCT ?accident WHERE {\n" +
+                        "    ?accident a ns:Accident .\n" +
+                        "    ?accident ns:weatherCondition \"" + weather + "\" .\n" +
                         "}";
 
         Query query = QueryFactory.create(queryString);
@@ -128,9 +149,9 @@ public class App {
 
         String queryString =
                 "PREFIX ns:   " + ns + "\n" +
-                "SELECT DISTINCT ?x WHERE {\n" +
-                        "    ?x a ns:Accident .\n" +
-                        "    ?x ns:injuryStatus \"" + lesividad +"\" .\n" +
+                "SELECT DISTINCT ?accident WHERE {\n" +
+                        "    ?accident a ns:Accident .\n" +
+                        "    ?accident ns:injuryStatus \"" + lesividad +"\" .\n" +
                         "}";
 
         Query query = QueryFactory.create(queryString);
@@ -156,9 +177,9 @@ public class App {
 
         String queryString =
                 "PREFIX ns:   " + ns + "\n" +
-                "SELECT DISTINCT ?x WHERE {\n" +
-                        "    ?x a ns:Accident .\n" +
-                        "    ?x ns:typeAccident \"" + typeA +"\" .\n" +
+                "SELECT DISTINCT ?accident WHERE {\n" +
+                        "    ?accident a ns:Accident .\n" +
+                        "    ?accident ns:typeAccident \"" + typeA +"\" .\n" +
                         "}";
 
         Query query = QueryFactory.create(queryString);
@@ -185,10 +206,10 @@ public class App {
         String queryString =
                         "PREFIX ns:   " + ns + "\n" +
                         "PREFIX xsd:   " + xsd + "\n" +
-                        "SELECT ?x\n" +
+                        "SELECT ?accident\n" +
                         "WHERE {\n" +
-                        "      ?x a ns:Accident .\n" +
-                        "      ?x ns:date ?date .\n" +
+                        "      ?accident a ns:Accident .\n" +
+                        "      ?accident ns:date ?date .\n" +
                         "      FILTER (?date >= \"2019-" + mes + "-01T00:00Z\"^^xsd:dateTime && " +
                         "?date < \"2019-" + mes + "-30T23:59ZZ\"^^xsd:dateTime)\n" +
                         "      }";
@@ -244,6 +265,6 @@ public class App {
          */
 
         App test = new App();
-        test.monthAccidents(model);
+        test.streetAccidents(model);
     }
 }
