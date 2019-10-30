@@ -2,7 +2,7 @@ package main.java;// https://github.com/BorderCloud/SPARQL-JAVA
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class Main {
+public class ExternalQueryMain {
 
     public static HashMap<String, HashMap> retrieveData(String endpointUrl, String query) throws EndpointException {
         Endpoint sp = new Endpoint(endpointUrl, false);
