@@ -16,6 +16,7 @@ import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Property;
 import org.apache.jena.util.FileManager;
 import org.apache.jena.vocabulary.VCARD;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class App {
@@ -66,6 +67,20 @@ public class App {
 
         //Now convert to JSONObject
         JSONObject jsonObject = new JSONObject(json);
+
+        String key = "head";
+
+        JSONObject head = jsonObject.getJSONObject(key);
+
+        key = "vars";
+
+        JSONArray vars = head.getJSONArray(key);
+
+        System.out.println(jsonObject);
+
+        System.out.println(head);
+
+        System.out.println(vars);
 
         //https://stackoverflow.com/questions/6856120/building-html-in-java-code-only
         StringBuilder htmlBuilder = new StringBuilder();
