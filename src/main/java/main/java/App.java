@@ -30,6 +30,7 @@ public class App {
     public static String xsd = "<http://www.w3.org/2001/XMLSchema#>";
 
     private Scanner myObj = new Scanner(System.in);
+    private Scanner menu = new Scanner(System.in);
 
     public void showInfo (String uri, OntModel model) {
 
@@ -524,6 +525,23 @@ public class App {
         qe.close();
     }
 
+    public int menu () {
+
+        System.out.println("\nIndique la operación ha realizar, por favor :D\n");
+
+        System.out.println("1. Accidentes por calle\n" +
+                "2. Accidentes por distrito\n" +
+                "3. Accidentes por clima\n" +
+                "4. Accidentes por grado de lesividad\n" +
+                "5. Accidentes por tipo de accidente\n" +
+                "6. Accidentes por mes\n" +
+                "7. Salir");
+
+        int op = menu.nextInt();
+
+        return op;
+    }
+
     public static void main(String args[]) {
 
         //Resource file (cuidado con el ttl que no lo deja abrir, por lo que veo tiene que ser rdf/xml por temas de la codificacion)
@@ -542,17 +560,43 @@ public class App {
         //model.read(in, null);
         model.read(filename,null,"TTL");
 
-        /*
-        https://developer.ibm.com/articles/j-sparql/
-        1. Accidentes por calle
-        2. Accidentes por distrito
-        3. Accidentes por edad
-        4. Accidentes por grado de lesividad
-        5. Accidentes por tipo de accidente
-        6. Accidentes por mes
-         */
-
         App test = new App();
-        test.neighborhoodAccidents(model);
+
+        boolean runeo = true;
+
+        while (runeo) {
+
+            int op = test.menu();
+
+            System.out.println("op " + op);
+
+            switch (op) {
+                case 1:
+                    test.streetAccidents(model);
+                    break;
+                case 2:
+                    test.neighborhoodAccidents(model);
+                    break;
+                case 3:
+                    test.weatherAccidents(model);
+                    break;
+                case 4:
+                    test.injuryAccidents(model);
+                    break;
+                case 5:
+                    test.typeAccidents(model);
+                    break;
+                case 6:
+                    test.monthAccidents(model);
+                    break;
+                case 7:
+                    runeo = false;
+                    System.out.println("Saliendo... Hasta la proxima :D");
+                    break;
+                default:
+                    System.out.println("Operación errónea\n");
+                    break;
+            }
+        }
     }
 }
