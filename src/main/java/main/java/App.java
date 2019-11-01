@@ -6,6 +6,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.util.Scanner;
 
+import org.apache.jena.base.Sys;
 import org.apache.jena.datatypes.xsd.XSDDateTime;
 import org.apache.jena.ontology.Individual;
 import org.apache.jena.ontology.OntClass;
@@ -30,6 +31,113 @@ public class App {
 
     private Scanner myObj = new Scanner(System.in);
 
+    public void showInfo (String uri, OntModel model) {
+
+        System.out.println("\nProcesando información para la URI " + uri + " ...\n");
+
+        String queryInfo =
+                "PREFIX ns:   " + ns + "\n" +
+                        "PREFIX rdfs:   " + rdfs + "\n" +
+                        "PREFIX owl:   " + owl + "\n" +
+                        "SELECT DISTINCT ?expedient ?date ?street ?district ?wikidatadistrict ?injury ?weather ?typeA WHERE {\n" +
+                        "<" + uri + "> a ns:Accident .\n" +
+                        "<" + uri + "> ns:date ?date .\n" +
+                        "<" + uri + "> ns:occursOn ?streetUri .\n" +
+                        "<" + uri + "> ns:injuryStatus ?injury .\n" +
+                        "<" + uri + "> ns:weatherCondition ?weather .\n" +
+                        "<" + uri + "> ns:typeAccident ?typeA .\n" +
+                        "<" + uri + "> rdfs:label ?expedient .\n" +
+                        "    ?streetUri ns:locatedIn ?districtUri .\n" +
+                        "    ?streetUri rdfs:label ?street .\n" +
+                        "    ?districtUri a ns:neighborhood .\n" +
+                        "    ?districtUri rdfs:label ?district .\n" +
+                        "    ?districtUri owl:sameAs ?wikidatadistrict .\n" +
+                        "}";
+
+        Query query = QueryFactory.create(queryInfo);
+
+        // Execute the query and obtain results
+        QueryExecution qe = QueryExecutionFactory.create(query, model);
+        ResultSet results = qe.execSelect();
+
+        // Output query results
+        //ResultSetFormatter.out(System.out, results, query);
+
+        // write to a ByteArrayOutputStream
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+
+        ResultSetFormatter.outputAsJSON(outputStream, results);
+
+        // and turn that into a String
+        String json = new String(outputStream.toByteArray());
+
+        //Now convert to JSONObject
+        JSONObject jsonObject = new JSONObject(json);
+
+        JSONObject sparqlResults = jsonObject.getJSONObject("results");
+
+        JSONArray sparqlBindings = sparqlResults.getJSONArray("bindings");
+
+        JSONObject sparqlBindingsIndex = sparqlBindings.getJSONObject(0);
+
+        JSONObject sparqlDate = sparqlBindingsIndex.getJSONObject("date");
+
+        String date = sparqlDate.getString("value");
+
+        JSONObject sparqlWikidata = sparqlBindingsIndex.getJSONObject("wikidatadistrict");
+
+        String wikidata = sparqlWikidata.getString("value");
+
+        JSONObject sparqlStreet = sparqlBindingsIndex.getJSONObject("street");
+
+        String street = sparqlStreet.getString("value");
+
+        JSONObject sparqlDistrict = sparqlBindingsIndex.getJSONObject("district");
+
+        String district = sparqlDistrict.getString("value");
+
+        JSONObject sparqlWeather = sparqlBindingsIndex.getJSONObject("weather");
+
+        String weather = sparqlWeather.getString("value");
+
+        JSONObject sparqlInjury = sparqlBindingsIndex.getJSONObject("injury");
+
+        String injury = sparqlInjury.getString("value");
+
+        JSONObject sparqlExpedient = sparqlBindingsIndex.getJSONObject("expedient");
+
+        String expedient = sparqlExpedient.getString("value");
+
+        JSONObject sparqlTypeA = sparqlBindingsIndex.getJSONObject("typeA");
+
+        String typeA = sparqlTypeA.getString("value");
+
+        /*System.out.println(jsonObject);
+        System.out.println(sparqlResults);
+        System.out.println(sparqlBindings);
+        System.out.println(sparqlBindingsIndex);*/
+
+        System.out.println("Expedient: " + expedient);
+        System.out.println("Date: " + date);
+        System.out.println("Street: " + street);
+        System.out.println("District: " + district);
+        System.out.println("Wikidata District: " + wikidata.substring(30));
+        System.out.println("Injury Status: " + injury);
+        System.out.println("Weather Condition: " + weather);
+        System.out.println("Type Accident: " + typeA);
+
+        // Important ‑ free up resources used running the query
+        qe.close();
+
+        //https://stackoverflow.com/questions/6856120/building-html-in-java-code-only
+        /*StringBuilder htmlBuilder = new StringBuilder();
+        htmlBuilder.append("<html>");
+        htmlBuilder.append("<head><title>Hello World</title></head>");
+        htmlBuilder.append("<body><p>Look at my body!</p></body>");
+        htmlBuilder.append("</html>");
+        String html = htmlBuilder.toString();*/
+    }
+
     public void streetAccidents (OntModel model) {
 
         // Create a new query 1. Accidentes por calle
@@ -40,8 +148,8 @@ public class App {
 
         String queryString =
                 "PREFIX ns:   " + ns + "\n" +
-                "PREFIX rdfs:   " + rdfs + "\n" +
-                "SELECT DISTINCT ?accident WHERE {\n" +
+                        "PREFIX rdfs:   " + rdfs + "\n" +
+                        "SELECT DISTINCT ?accident WHERE {\n" +
                         "    ?accident a ns:Accident .\n" +
                         "    ?accident ns:occursOn ?uri .\n" +
                         "    ?uri a ns:street .\n" +
@@ -68,27 +176,27 @@ public class App {
         //Now convert to JSONObject
         JSONObject jsonObject = new JSONObject(json);
 
-        String key = "head";
+        JSONObject sparqlResults = jsonObject.getJSONObject("results");
 
-        JSONObject head = jsonObject.getJSONObject(key);
+        JSONArray sparqlBindings = sparqlResults.getJSONArray("bindings");
 
-        key = "vars";
+        for (int i = 0; i<sparqlBindings.length(); i++) {
 
-        JSONArray vars = head.getJSONArray(key);
+            JSONObject sparqlBindingsIndex = sparqlBindings.getJSONObject(i);
 
-        System.out.println(jsonObject);
+            JSONObject sparqlAccident = sparqlBindingsIndex.getJSONObject("accident");
 
-        System.out.println(head);
+            String uri = sparqlAccident.getString("value");
 
-        System.out.println(vars);
+            showInfo(uri, model);
 
-        //https://stackoverflow.com/questions/6856120/building-html-in-java-code-only
-        StringBuilder htmlBuilder = new StringBuilder();
-        htmlBuilder.append("<html>");
-        htmlBuilder.append("<head><title>Hello World</title></head>");
-        htmlBuilder.append("<body><p>Look at my body!</p></body>");
-        htmlBuilder.append("</html>");
-        String html = htmlBuilder.toString();
+            /*System.out.println(jsonObject);
+            System.out.println(sparqlResults);
+            System.out.println(sparqlBindings);
+            System.out.println(sparqlBindingsIndex);
+            System.out.println(sparqlAccident);
+            System.out.println(sparqlValue);*/
+        }
 
         // Important ‑ free up resources used running the query
         qe.close();
@@ -104,8 +212,8 @@ public class App {
 
         String queryString =
                 "PREFIX ns:   " + ns + "\n" +
-                "PREFIX rdfs:   " + rdfs + "\n" +
-                "SELECT DISTINCT ?accident WHERE {\n" +
+                        "PREFIX rdfs:   " + rdfs + "\n" +
+                        "SELECT DISTINCT ?accident WHERE {\n" +
                         "    ?accident a ns:Accident .\n" +
                         "    ?accident ns:occursOn ?street .\n" +
                         "    ?street ns:locatedIn ?uri .\n" +
@@ -120,7 +228,40 @@ public class App {
         ResultSet results = qe.execSelect();
 
         // Output query results
-        ResultSetFormatter.out(System.out, results, query);
+        //ResultSetFormatter.out(System.out, results, query);
+
+        // write to a ByteArrayOutputStream
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+
+        ResultSetFormatter.outputAsJSON(outputStream, results);
+
+        // and turn that into a String
+        String json = new String(outputStream.toByteArray());
+
+        //Now convert to JSONObject
+        JSONObject jsonObject = new JSONObject(json);
+
+        JSONObject sparqlResults = jsonObject.getJSONObject("results");
+
+        JSONArray sparqlBindings = sparqlResults.getJSONArray("bindings");
+
+        for (int i = 0; i<sparqlBindings.length(); i++) {
+
+            JSONObject sparqlBindingsIndex = sparqlBindings.getJSONObject(i);
+
+            JSONObject sparqlAccident = sparqlBindingsIndex.getJSONObject("accident");
+
+            String uri = sparqlAccident.getString("value");
+
+            showInfo(uri, model);
+
+            /*System.out.println(jsonObject);
+            System.out.println(sparqlResults);
+            System.out.println(sparqlBindings);
+            System.out.println(sparqlBindingsIndex);
+            System.out.println(sparqlAccident);
+            System.out.println(sparqlValue);*/
+        }
 
         // Important ‑ free up resources used running the query
         qe.close();
@@ -136,7 +277,7 @@ public class App {
 
         String queryString =
                 "PREFIX ns:   " + ns + "\n" +
-                "SELECT DISTINCT ?accident WHERE {\n" +
+                        "SELECT DISTINCT ?accident WHERE {\n" +
                         "    ?accident a ns:Accident .\n" +
                         "    ?accident ns:weatherCondition \"" + weather + "\" .\n" +
                         "}";
@@ -148,7 +289,40 @@ public class App {
         ResultSet results = qe.execSelect();
 
         // Output query results
-        ResultSetFormatter.out(System.out, results, query);
+        //ResultSetFormatter.out(System.out, results, query);
+
+        // write to a ByteArrayOutputStream
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+
+        ResultSetFormatter.outputAsJSON(outputStream, results);
+
+        // and turn that into a String
+        String json = new String(outputStream.toByteArray());
+
+        //Now convert to JSONObject
+        JSONObject jsonObject = new JSONObject(json);
+
+        JSONObject sparqlResults = jsonObject.getJSONObject("results");
+
+        JSONArray sparqlBindings = sparqlResults.getJSONArray("bindings");
+
+        for (int i = 0; i<sparqlBindings.length(); i++) {
+
+            JSONObject sparqlBindingsIndex = sparqlBindings.getJSONObject(i);
+
+            JSONObject sparqlAccident = sparqlBindingsIndex.getJSONObject("accident");
+
+            String uri = sparqlAccident.getString("value");
+
+            showInfo(uri, model);
+
+            /*System.out.println(jsonObject);
+            System.out.println(sparqlResults);
+            System.out.println(sparqlBindings);
+            System.out.println(sparqlBindingsIndex);
+            System.out.println(sparqlAccident);
+            System.out.println(sparqlValue);*/
+        }
 
         // Important ‑ free up resources used running the query
         qe.close();
@@ -164,7 +338,7 @@ public class App {
 
         String queryString =
                 "PREFIX ns:   " + ns + "\n" +
-                "SELECT DISTINCT ?accident WHERE {\n" +
+                        "SELECT DISTINCT ?accident WHERE {\n" +
                         "    ?accident a ns:Accident .\n" +
                         "    ?accident ns:injuryStatus \"" + lesividad +"\" .\n" +
                         "}";
@@ -176,7 +350,40 @@ public class App {
         ResultSet results = qe.execSelect();
 
         // Output query results
-        ResultSetFormatter.out(System.out, results, query);
+        //ResultSetFormatter.out(System.out, results, query);
+
+        // write to a ByteArrayOutputStream
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+
+        ResultSetFormatter.outputAsJSON(outputStream, results);
+
+        // and turn that into a String
+        String json = new String(outputStream.toByteArray());
+
+        //Now convert to JSONObject
+        JSONObject jsonObject = new JSONObject(json);
+
+        JSONObject sparqlResults = jsonObject.getJSONObject("results");
+
+        JSONArray sparqlBindings = sparqlResults.getJSONArray("bindings");
+
+        for (int i = 0; i<sparqlBindings.length(); i++) {
+
+            JSONObject sparqlBindingsIndex = sparqlBindings.getJSONObject(i);
+
+            JSONObject sparqlAccident = sparqlBindingsIndex.getJSONObject("accident");
+
+            String uri = sparqlAccident.getString("value");
+
+            showInfo(uri, model);
+
+            /*System.out.println(jsonObject);
+            System.out.println(sparqlResults);
+            System.out.println(sparqlBindings);
+            System.out.println(sparqlBindingsIndex);
+            System.out.println(sparqlAccident);
+            System.out.println(sparqlValue);*/
+        }
 
         // Important ‑ free up resources used running the query
         qe.close();
@@ -192,7 +399,7 @@ public class App {
 
         String queryString =
                 "PREFIX ns:   " + ns + "\n" +
-                "SELECT DISTINCT ?accident WHERE {\n" +
+                        "SELECT DISTINCT ?accident WHERE {\n" +
                         "    ?accident a ns:Accident .\n" +
                         "    ?accident ns:typeAccident \"" + typeA +"\" .\n" +
                         "}";
@@ -204,7 +411,40 @@ public class App {
         ResultSet results = qe.execSelect();
 
         // Output query results
-        ResultSetFormatter.out(System.out, results, query);
+        //ResultSetFormatter.out(System.out, results, query);
+
+        // write to a ByteArrayOutputStream
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+
+        ResultSetFormatter.outputAsJSON(outputStream, results);
+
+        // and turn that into a String
+        String json = new String(outputStream.toByteArray());
+
+        //Now convert to JSONObject
+        JSONObject jsonObject = new JSONObject(json);
+
+        JSONObject sparqlResults = jsonObject.getJSONObject("results");
+
+        JSONArray sparqlBindings = sparqlResults.getJSONArray("bindings");
+
+        for (int i = 0; i<sparqlBindings.length(); i++) {
+
+            JSONObject sparqlBindingsIndex = sparqlBindings.getJSONObject(i);
+
+            JSONObject sparqlAccident = sparqlBindingsIndex.getJSONObject("accident");
+
+            String uri = sparqlAccident.getString("value");
+
+            showInfo(uri, model);
+
+            /*System.out.println(jsonObject);
+            System.out.println(sparqlResults);
+            System.out.println(sparqlBindings);
+            System.out.println(sparqlBindingsIndex);
+            System.out.println(sparqlAccident);
+            System.out.println(sparqlValue);*/
+        }
 
         // Important ‑ free up resources used running the query
         qe.close();
@@ -219,7 +459,7 @@ public class App {
         String mes = myObj.nextLine();
 
         String queryString =
-                        "PREFIX ns:   " + ns + "\n" +
+                "PREFIX ns:   " + ns + "\n" +
                         "PREFIX xsd:   " + xsd + "\n" +
                         "SELECT ?accident\n" +
                         "WHERE {\n" +
@@ -245,7 +485,40 @@ public class App {
         ResultSet results = qe.execSelect();
 
         // Output query results
-        ResultSetFormatter.out(System.out, results, query);
+        //ResultSetFormatter.out(System.out, results, query);
+
+        // write to a ByteArrayOutputStream
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+
+        ResultSetFormatter.outputAsJSON(outputStream, results);
+
+        // and turn that into a String
+        String json = new String(outputStream.toByteArray());
+
+        //Now convert to JSONObject
+        JSONObject jsonObject = new JSONObject(json);
+
+        JSONObject sparqlResults = jsonObject.getJSONObject("results");
+
+        JSONArray sparqlBindings = sparqlResults.getJSONArray("bindings");
+
+        for (int i = 0; i<sparqlBindings.length(); i++) {
+
+            JSONObject sparqlBindingsIndex = sparqlBindings.getJSONObject(i);
+
+            JSONObject sparqlAccident = sparqlBindingsIndex.getJSONObject("accident");
+
+            String uri = sparqlAccident.getString("value");
+
+            showInfo(uri, model);
+
+            /*System.out.println(jsonObject);
+            System.out.println(sparqlResults);
+            System.out.println(sparqlBindings);
+            System.out.println(sparqlBindingsIndex);
+            System.out.println(sparqlAccident);
+            System.out.println(sparqlValue);*/
+        }
 
         // Important ‑ free up resources used running the query
         qe.close();
@@ -280,6 +553,6 @@ public class App {
          */
 
         App test = new App();
-        test.streetAccidents(model);
+        test.neighborhoodAccidents(model);
     }
 }
