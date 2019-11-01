@@ -35,10 +35,8 @@ public class ExternalQueryMain {
 
 
         fichero_escritura.write("<HTML>");
-
+        System.out.println("pasa");
         for (String variable : (ArrayList<String>) rs.get("result").get("variables")) {
-
-
             fichero_escritura.write(String.format("%-"+size+"."+size+"s", variable ) + " | ");
         }
 
