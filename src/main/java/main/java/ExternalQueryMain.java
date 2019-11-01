@@ -38,12 +38,10 @@ public class ExternalQueryMain {
 
         for (String variable : (ArrayList<String>) rs.get("result").get("variables")) {
 
-
             fichero_escritura.write(String.format("%-"+size+"."+size+"s", variable ) + " | ");
         }
 
         fichero_escritura.write("</HTML>");
-		/*
         System.out.print("\n");
         for (HashMap value : (ArrayList<HashMap>) rs.get("result").get("rows")) {
             for (String variable : (ArrayList<String>) rs.get("result").get("variables")) {
@@ -51,7 +49,7 @@ public class ExternalQueryMain {
             }
             System.out.print("\n");
         }
-		*/
+
     }
 
 
@@ -59,18 +57,17 @@ public class ExternalQueryMain {
         String endpointUrl = "https://query.wikidata.org/sparql";
 
         String querySelect = "\n" +
-                "SELECT  ?postalCode ?pais ?Coordenadas ?administraciones ?poblacion\n" +
+                "SELECT   ?pais ?Coordenadas ?postalCode ?poblacion ?area  ?pic         \n" +
                 "{\n" +
                 "# Salamanca  \"has population\"  poblacion\n" +
-                "\n" +
-                "  wd:Q1773521  wdt:P281 ?postalCode.\n" +
                 "  wd:Q1773521 wdt:P17 ?pais.\n" +
                 "  wd:Q1773521 wdt:P625 ?Coordenadas.\n" +
-                "  wd:Q1773521 wdt:P150 ?administraciones.\n" +
-                "   wd:Q1773521 wdt:P1082 ?poblacion\n" +
-                "               \n" +
-                "}\n" +
-                "";
+                "  wd:Q1773521 wdt:P281 ?postalCode.\n" +
+                "  wd:Q1773521 wdt:P1082 ?poblacion.\n" +
+                "  wd:Q1773521 wdt:P2046 ?area.\n" +
+                "   wd:Q1773521 wdt:P18 ?pic\n" +
+                " \n" +
+                "}";
 
         try {
 
