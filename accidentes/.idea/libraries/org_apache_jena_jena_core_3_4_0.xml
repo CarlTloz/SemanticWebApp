@@ -1,0 +1,20 @@
+<component name="libraryTable">
+  <library name="org.apache.jena:jena-core:3.4.0" type="repository">
+    <properties maven-id="org.apache.jena:jena-core:3.4.0" />
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/jena-core-3.4.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/slf4j-api-1.7.25.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jena-iri-3.4.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/xercesImpl-2.11.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/xml-apis-1.4.01.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/commons-cli-1.4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jena-base-3.4.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jena-shaded-guava-3.4.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/commons-csv-1.4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/commons-lang3-3.4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/collection-0.7.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
