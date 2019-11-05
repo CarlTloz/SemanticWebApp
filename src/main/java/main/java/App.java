@@ -6,6 +6,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.util.Scanner;
 
+import jdk.nashorn.internal.runtime.regexp.joni.exception.SyntaxException;
 import org.apache.jena.base.Sys;
 import org.apache.jena.datatypes.xsd.XSDDateTime;
 import org.apache.jena.ontology.Individual;
@@ -203,6 +204,35 @@ public class App {
         qe.close();
     }
 
+    private boolean checkResult(String uri, String district, OntModel model) {
+        String queryString =
+                "PREFIX ns:   " + ns + "\n" +
+                        "PREFIX rdfs:   " + rdfs + "\n" +
+                        "PREFIX owl:   " + owl + "\n" +
+                        "ASK {\n" +
+                        "   <" + uri + "> a ns:Accident .\n" +
+                        "   <" + uri + "> ns:occursOn ?streetUri .\n" +
+                        "   ?streetUri ns:locatedIn ?districtUri .\n" +
+                        "   ?districtUri a ns:neighborhood .\n" +
+                        "   ?districtUri rdfs:label \"" + district + "\" .\n" +
+                        "}";
+
+        //System.out.println("Petición:\n" + queryString);
+
+        Query query = QueryFactory.create(queryString);
+
+        // Execute the query and obtain results
+        QueryExecution qe = QueryExecutionFactory.create(query, model);
+        boolean results = qe.execAsk();
+
+        // Output query results
+        //System.out.println("ASK: " + results);
+
+        qe.close();
+
+        return results;
+    }
+
     public void neighborhoodAccidents (OntModel model) {
 
         // Create a new query 2. Accidentes por distrito
@@ -217,9 +247,11 @@ public class App {
                         "SELECT DISTINCT ?accident WHERE {\n" +
                         "    ?accident a ns:Accident .\n" +
                         "    ?accident ns:occursOn ?street .\n" +
+                        "    ?street a ns:street .\n" +
                         "    ?street ns:locatedIn ?uri .\n" +
                         "    ?uri a ns:neighborhood .\n" +
-                        "    ?uri rdfs:label \"" + distrito + "\" .\n" +
+                        "    ?uri rdfs:label ?label .\n" +
+                        "    FILTER (?label = \"" + distrito + "\") .\n" +
                         "}";
 
         Query query = QueryFactory.create(queryString);
@@ -246,6 +278,10 @@ public class App {
 
         JSONArray sparqlBindings = sparqlResults.getJSONArray("bindings");
 
+        System.out.println("Petición:\n" + queryString);
+
+        System.out.println("Procesando información para " + sparqlBindings.length() + " resultados");
+
         for (int i = 0; i<sparqlBindings.length(); i++) {
 
             JSONObject sparqlBindingsIndex = sparqlBindings.getJSONObject(i);
@@ -254,7 +290,9 @@ public class App {
 
             String uri = sparqlAccident.getString("value");
 
-            showInfo(uri, model);
+            //if (checkResult(uri, distrito, model)) {
+                showInfo(uri, model);
+            //}
 
             /*System.out.println(jsonObject);
             System.out.println(sparqlResults);
@@ -455,20 +493,19 @@ public class App {
 
         // Create a new query 6. Accidentes por mes
 
-        System.out.println("Escriba el mes a buscar");
+        System.out.println("Escriba la fecha a buscar");
 
-        String mes = myObj.nextLine();
+        String fecha = myObj.nextLine();
 
         String queryString =
-                "PREFIX ns:   " + ns + "\n" +
-                        "PREFIX xsd:   " + xsd + "\n" +
-                        "SELECT ?accident\n" +
+                "PREFIX ns:   <http://biciaccident.es/ontology#>\n" +
+                        "PREFIX xsd:   <http://www.w3.org/2001/XMLSchema#>\n" +
+                        "SELECT ?accident ?date \n" +
                         "WHERE {\n" +
                         "      ?accident a ns:Accident .\n" +
                         "      ?accident ns:date ?date .\n" +
-                        "      FILTER (?date >= \"2019-" + mes + "-01T00:00Z\"^^xsd:dateTime && " +
-                        "?date < \"2019-" + mes + "-30T23:59ZZ\"^^xsd:dateTime)\n" +
-                        "      }";
+                        "      FILTER (?date = \"" + fecha + "\"^^xsd:dateTime ) .\n" +
+                        "}";
 
         System.out.println(queryString);
 
@@ -534,12 +571,252 @@ public class App {
                 "3. Accidentes por clima\n" +
                 "4. Accidentes por grado de lesividad\n" +
                 "5. Accidentes por tipo de accidente\n" +
-                "6. Accidentes por mes\n" +
+                "6. Accidentes por fecha\n" +
                 "7. Salir");
 
         int op = menu.nextInt();
 
         return op;
+    }
+
+    private void distintos (String uri, String districtUri, String district) {
+        if (!district.equals(districtUri)) {
+            System.out.println("FALLA " + uri);
+            System.out.println("DISTRITO DE URI " + districtUri + " ENCUENTRA POR " + district);
+        }
+    }
+
+    private void bug (String uri, OntModel model, String distrito) {
+
+        System.out.println("\nProcesando bug URI " + uri + " ...\n");
+
+        String queryInfo =
+                "PREFIX ns:   " + ns + "\n" +
+                        "PREFIX rdfs:   " + rdfs + "\n" +
+                        "PREFIX owl:   " + owl + "\n" +
+                        "SELECT DISTINCT ?expedient ?date ?street ?district ?wikidatadistrict ?injury ?weather ?typeA WHERE {\n" +
+                        "<" + uri + "> a ns:Accident .\n" +
+                        "<" + uri + "> ns:date ?date .\n" +
+                        "<" + uri + "> ns:occursOn ?streetUri .\n" +
+                        "<" + uri + "> ns:injuryStatus ?injury .\n" +
+                        "<" + uri + "> ns:weatherCondition ?weather .\n" +
+                        "<" + uri + "> ns:typeAccident ?typeA .\n" +
+                        "<" + uri + "> rdfs:label ?expedient .\n" +
+                        "    ?streetUri ns:locatedIn ?districtUri .\n" +
+                        "    ?streetUri rdfs:label ?street .\n" +
+                        "    ?districtUri a ns:neighborhood .\n" +
+                        "    ?districtUri rdfs:label ?district .\n" +
+                        "    ?districtUri owl:sameAs ?wikidatadistrict .\n" +
+                        "}";
+
+        Query query = QueryFactory.create(queryInfo);
+
+        // Execute the query and obtain results
+        QueryExecution qe = QueryExecutionFactory.create(query, model);
+        ResultSet results = qe.execSelect();
+
+        // Output query results
+        //ResultSetFormatter.out(System.out, results, query);
+
+        // write to a ByteArrayOutputStream
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+
+        ResultSetFormatter.outputAsJSON(outputStream, results);
+
+        // and turn that into a String
+        String json = new String(outputStream.toByteArray());
+
+        //Now convert to JSONObject
+        JSONObject jsonObject = new JSONObject(json);
+
+        JSONObject sparqlResults = jsonObject.getJSONObject("results");
+
+        JSONArray sparqlBindings = sparqlResults.getJSONArray("bindings");
+
+        JSONObject sparqlBindingsIndex = sparqlBindings.getJSONObject(0);
+
+        JSONObject sparqlDate = sparqlBindingsIndex.getJSONObject("date");
+
+        String date = sparqlDate.getString("value");
+
+        JSONObject sparqlWikidata = sparqlBindingsIndex.getJSONObject("wikidatadistrict");
+
+        String wikidata = sparqlWikidata.getString("value");
+
+        JSONObject sparqlStreet = sparqlBindingsIndex.getJSONObject("street");
+
+        String street = sparqlStreet.getString("value");
+
+        JSONObject sparqlDistrict = sparqlBindingsIndex.getJSONObject("district");
+
+        String district = sparqlDistrict.getString("value");
+
+        JSONObject sparqlWeather = sparqlBindingsIndex.getJSONObject("weather");
+
+        String weather = sparqlWeather.getString("value");
+
+        JSONObject sparqlInjury = sparqlBindingsIndex.getJSONObject("injury");
+
+        String injury = sparqlInjury.getString("value");
+
+        JSONObject sparqlExpedient = sparqlBindingsIndex.getJSONObject("expedient");
+
+        String expedient = sparqlExpedient.getString("value");
+
+        JSONObject sparqlTypeA = sparqlBindingsIndex.getJSONObject("typeA");
+
+        String typeA = sparqlTypeA.getString("value");
+
+        /*System.out.println(jsonObject);
+        System.out.println(sparqlResults);
+        System.out.println(sparqlBindings);
+        System.out.println(sparqlBindingsIndex);*/
+
+        System.out.println("Expedient: " + expedient);
+        //System.out.println("Date: " + date);
+        System.out.println("Street: " + street);
+        System.out.println("District: " + district);
+        //System.out.println("Wikidata District: " + wikidata.substring(30));
+        //System.out.println("Injury Status: " + injury);
+        //System.out.println("Weather Condition: " + weather);
+        //System.out.println("Type Accident: " + typeA);
+
+        distintos(uri,district, distrito);
+
+        // Important ‑ free up resources used running the query
+        qe.close();
+
+        //https://stackoverflow.com/questions/6856120/building-html-in-java-code-only
+        /*StringBuilder htmlBuilder = new StringBuilder();
+        htmlBuilder.append("<html>");
+        htmlBuilder.append("<head><title>Hello World</title></head>");
+        htmlBuilder.append("<body><p>Look at my body!</p></body>");
+        htmlBuilder.append("</html>");
+        String html = htmlBuilder.toString();*/
+    }
+    public void bugDistrict (OntModel model, String distrito) {
+
+        String queryString =
+                "PREFIX ns:   " + ns + "\n" +
+                        "PREFIX rdfs:   " + rdfs + "\n" +
+                        "SELECT DISTINCT ?accident WHERE {\n" +
+                        "    ?accident a ns:Accident .\n" +
+                        "    ?accident ns:occursOn ?street .\n" +
+                        "    ?street a ns:street .\n" +
+                        "    ?street ns:locatedIn ?uri .\n" +
+                        "    ?uri a ns:neighborhood .\n" +
+                        "    ?uri rdfs:label ?label .\n" +
+                        "    FILTER (?label = \"" + distrito + "\") .\n" +
+                        "}";
+
+        Query query = QueryFactory.create(queryString);
+
+        // Execute the query and obtain results
+        QueryExecution qe = QueryExecutionFactory.create(query, model);
+        ResultSet results = qe.execSelect();
+
+        // Output query results
+        System.out.println("----------------------------------------------------------------------------- " + distrito);
+        System.out.println("Bug para " + distrito);
+        //ResultSetFormatter.out(System.out, results, query);
+
+        // write to a ByteArrayOutputStream
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+
+        ResultSetFormatter.outputAsJSON(outputStream, results);
+
+        // and turn that into a String
+        String json = new String(outputStream.toByteArray());
+
+        //Now convert to JSONObject
+        JSONObject jsonObject = new JSONObject(json);
+
+        JSONObject sparqlResults = jsonObject.getJSONObject("results");
+
+        JSONArray sparqlBindings = sparqlResults.getJSONArray("bindings");
+
+        //System.out.println("Petición:\n" + queryString);
+
+        //System.out.println("Procesando información para " + sparqlBindings.length() + " resultados");
+
+        for (int i = 0; i<sparqlBindings.length(); i++) {
+
+            JSONObject sparqlBindingsIndex = sparqlBindings.getJSONObject(i);
+
+            JSONObject sparqlAccident = sparqlBindingsIndex.getJSONObject("accident");
+
+            String uri = sparqlAccident.getString("value");
+
+            bug(uri, model, distrito);
+            System.out.println("----------------------------------------------------------------------------- " + distrito);
+
+            /*System.out.println(jsonObject);
+            System.out.println(sparqlResults);
+            System.out.println(sparqlBindings);
+            System.out.println(sparqlBindingsIndex);
+            System.out.println(sparqlAccident);
+            System.out.println(sparqlValue);*/
+        }
+
+        // Important ‑ free up resources used running the query
+        qe.close();
+    }
+
+
+    private void everyDistrict (OntModel model) {
+
+        String queryString =
+                "PREFIX ns:   " + ns + "\n" +
+                        "PREFIX rdfs:   " + rdfs + "\n" +
+                        "SELECT DISTINCT ?label WHERE {\n" +
+                        "    ?district a ns:neighborhood .\n" +
+                        "    ?district rdfs:label ?label .\n" +
+                        "}";
+
+        Query query = QueryFactory.create(queryString);
+
+        // Execute the query and obtain results
+        QueryExecution qe = QueryExecutionFactory.create(query, model);
+        ResultSet results = qe.execSelect();
+
+        // Output query results
+        //ResultSetFormatter.out(System.out, results, query);
+
+        // write to a ByteArrayOutputStream
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+
+        ResultSetFormatter.outputAsJSON(outputStream, results);
+
+        // and turn that into a String
+        String json = new String(outputStream.toByteArray());
+
+        //Now convert to JSONObject
+        JSONObject jsonObject = new JSONObject(json);
+
+        JSONObject sparqlResults = jsonObject.getJSONObject("results");
+
+        JSONArray sparqlBindings = sparqlResults.getJSONArray("bindings");
+
+        for (int i = 0; i<sparqlBindings.length(); i++) {
+
+            JSONObject sparqlBindingsIndex = sparqlBindings.getJSONObject(i);
+
+            JSONObject sparqlAccident = sparqlBindingsIndex.getJSONObject("label");
+
+            String uri = sparqlAccident.getString("value");
+
+            bugDistrict(model, uri);
+
+            /*System.out.println(jsonObject);
+            System.out.println(sparqlResults);
+            System.out.println(sparqlBindings);
+            System.out.println(sparqlBindingsIndex);
+            System.out.println(sparqlAccident);
+            System.out.println(sparqlValue);*/
+        }
+
+        // Important ‑ free up resources used running the query
+        qe.close();
     }
 
     public static void main(String args[]) {
@@ -568,8 +845,6 @@ public class App {
 
             int op = test.menu();
 
-            System.out.println("op " + op);
-
             switch (op) {
                 case 1:
                     test.streetAccidents(model);
@@ -592,6 +867,9 @@ public class App {
                 case 7:
                     runeo = false;
                     System.out.println("Saliendo... Hasta la proxima :D");
+                    break;
+                case 69:
+                    test.everyDistrict(model);
                     break;
                 default:
                     System.out.println("Operación errónea\n");
