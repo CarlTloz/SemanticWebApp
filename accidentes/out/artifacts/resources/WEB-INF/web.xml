@@ -3,25 +3,24 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
          version="4.0">
-    <context-param>
-        <param-name>javax.faces.CONFIG_FILES</param-name>
-        <param-value>/pom.xml,/faces-config.xml</param-value>
-    </context-param>
     <servlet>
-        <servlet-name>consultas</servlet-name>
-        <servlet-class>accidentes.consultas</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>Faces Servlet</servlet-name>
-        <servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
-        <load-on-startup>1</load-on-startup>
+        <servlet-name>resource</servlet-name>
+        <servlet-class>accidentes.resource</servlet-class>
     </servlet>
     <servlet-mapping>
-        <servlet-name>consultas</servlet-name>
-        <url-pattern>/consultas</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>Faces Servlet</servlet-name>
-        <url-pattern>*.xhtml</url-pattern>
+        <servlet-name>resource</servlet-name>
+        <url-pattern>/resource</url-pattern>
+        <url-pattern>/resource/street</url-pattern>
+        <url-pattern>/resource/weather</url-pattern>
+        <url-pattern>/resource/lesivity</url-pattern>
+        <url-pattern>/resource/accident</url-pattern>
+        <url-pattern>/resource/date</url-pattern>
+        <url-pattern>/resource/district</url-pattern>
+        <url-pattern>/resource/street/*</url-pattern>
+        <url-pattern>/resource/weather/*</url-pattern>
+        <url-pattern>/resource/lesivity/*</url-pattern>
+        <url-pattern>/resource/accident/*</url-pattern>
+        <url-pattern>/resource/date/*</url-pattern>
+        <url-pattern>/resource/district/*</url-pattern>
     </servlet-mapping>
 </web-app>

@@ -22,9 +22,9 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="Jsp File" />
         <option value="Tag Library Descriptor" />
         <option value="FxmlFile" />
+        <option value="Jsp File" />
         <option value="Class" />
       </list>
     </option>
@@ -42,27 +42,35 @@
     <property name="Repository.Attach.Annotations" value="false" />
     <property name="Repository.Attach.JavaDocs" value="false" />
     <property name="Repository.Attach.Sources" value="false" />
+    <property name="ToolWindowDuplicates.ShowToolbar" value="false" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/web/WEB-INF" />
-    <property name="project.structure.last.edited" value="Artifacts" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/src/metodos" />
+    <property name="nodejs_package_manager_path" value="npm" />
+    <property name="project.structure.last.edited" value="Libraries" />
     <property name="project.structure.proportion" value="0.15625" />
     <property name="project.structure.side.proportion" value="0.18112889" />
+    <property name="settings.editor.selected.configurable" value="JavaScript.Libraries" />
   </component>
   <component name="RecentsManager">
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="C:\Users\67799924\Desktop\UNI\UNI\WEB_SEMANTIC\accidentes\web\WEB-INF" />
-      <recent name="C:\Users\67799924\Desktop\UNI\UNI\WEB_SEMANTIC\accidentes\src\resources" />
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\67799924\Desktop\UNI\UNI\WEB_SEMANTIC\accidentes\resources" />
+      <recent name="C:\Users\67799924\Desktop\UNI\UNI\WEB_SEMANTIC\accidentes\web" />
       <recent name="C:\Users\67799924\Desktop\UNI\UNI\WEB_SEMANTIC\accidentes" />
+      <recent name="C:\Users\67799924\Desktop\UNI\UNI\WEB_SEMANTIC\accidentes\src\resources" />
+    </key>
+    <key name="CreateClassDialog.RecentsKey">
+      <recent name="metodos" />
     </key>
     <key name="CopyClassDialog.RECENTS_KEY">
       <recent name="accidentes" />
     </key>
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="C:\Users\67799924\Desktop\UNI\UNI\WEB_SEMANTIC\accidentes\web" />
-      <recent name="C:\Users\67799924\Desktop\UNI\UNI\WEB_SEMANTIC\accidentes\resources" />
-      <recent name="C:\Users\67799924\Desktop\UNI\UNI\WEB_SEMANTIC\accidentes" />
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\67799924\Desktop\UNI\UNI\WEB_SEMANTIC\accidentes\src\metodos" />
+      <recent name="C:\Users\67799924\Desktop\UNI\UNI\WEB_SEMANTIC\accidentes\lib" />
+      <recent name="C:\Users\67799924\Desktop\UNI\UNI\WEB_SEMANTIC\accidentes\web\WEB-INF" />
       <recent name="C:\Users\67799924\Desktop\UNI\UNI\WEB_SEMANTIC\accidentes\src\resources" />
+      <recent name="C:\Users\67799924\Desktop\UNI\UNI\WEB_SEMANTIC\accidentes" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -77,8 +85,8 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Tomcat Server.Tomcat 9.0.27">
-    <configuration name="App" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+  <component name="RunManager" selected="Application.ConsultaExterna">
+    <configuration name="App" type="Application" factoryName="Application" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="metodos.App" />
       <module name="accidentes" />
       <extension name="coverage">
@@ -91,7 +99,33 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="test" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+    <configuration name="ConsultaExterna" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="metodos.ConsultaExterna" />
+      <module name="accidentes" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="metodos.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="ExternalQueryMain" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="metodos.ExternalQueryMain" />
+      <module name="accidentes" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="metodos.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="test" type="Application" factoryName="Application" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="metodos.test" />
       <module name="accidentes" />
       <extension name="coverage">
@@ -105,7 +139,7 @@
       </method>
     </configuration>
     <configuration name="Tomcat 9.0.27" type="#com.intellij.j2ee.web.tomcat.TomcatRunConfigurationFactory" factoryName="Local" APPLICATION_SERVER_NAME="Tomcat 9.0.27" ALTERNATIVE_JRE_ENABLED="false">
-      <option name="OPEN_IN_BROWSER_URL" value="http://biciaccidentes.es:8080/app/" />
+      <option name="OPEN_IN_BROWSER_URL" value="http://biciaccidentes.es:8080/" />
       <option name="UPDATING_POLICY" value="redeploy-artifacts" />
       <deployment>
         <artifact name="resources">
@@ -181,11 +215,13 @@
       <item itemvalue="Application.App" />
       <item itemvalue="Application.test" />
       <item itemvalue="Tomcat Server.Tomcat 9.0.27" />
+      <item itemvalue="Application.ExternalQueryMain" />
+      <item itemvalue="Application.ConsultaExterna" />
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Application.test" />
-        <item itemvalue="Application.App" />
+        <item itemvalue="Application.ConsultaExterna" />
+        <item itemvalue="Application.ExternalQueryMain" />
       </list>
     </recent_temporary>
   </component>
@@ -200,10 +236,21 @@
       <option name="presentableId" value="Default" />
       <updated>1572654240492</updated>
       <workItem from="1572654246783" duration="21194000" />
+      <workItem from="1572822166906" duration="174000" />
+      <workItem from="1572855138945" duration="1131000" />
+      <workItem from="1572866977897" duration="10953000" />
+      <workItem from="1572904589422" duration="12849000" />
+      <workItem from="1572918852966" duration="6178000" />
+      <workItem from="1572954448910" duration="45840000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="1" />
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/accidentes$ExternalQueryMain.ic" NAME="ExternalQueryMain Coverage Results" MODIFIED="1572975617425" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false">
+      <FILTER>metodos.*</FILTER>
+    </SUITE>
   </component>
 </project>

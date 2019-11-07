@@ -48,5 +48,6 @@
     <orderEntry type="library" name="org.apache.jena:jena-arq:3.13.1" level="project" />
     <orderEntry type="library" name="jar_files" level="project" />
     <orderEntry type="library" name="org.apache.httpcomponents:httpclient-cache:4.5.3" level="project" />
+    <orderEntry type="library" name="library" level="project" />
   </component>
 </module>
