@@ -36,7 +36,7 @@ public class resource extends HttpServlet {
         try {
             a = new App();
             res = res + "<table class=\"table table-striped\">" + "<tbody>" + "<tr><th> ID </th> <th> District </th> " +" <th>Date</th> " + "<th>Street</th> " +"<th>Lesivity</th>"
-                   + "<th>Accident Type </th> <th> Wiki data </th> ";
+                   + "<th>Accident Type </th> <th> Wiki data District</th> ";
             palabra_clave = request.getParameter("palabra-clave");
             String[] u_name_a = request.getRequestURI().split("/");
 
@@ -94,7 +94,7 @@ public class resource extends HttpServlet {
                             "    <div class=\"modal-dialog modal-xl\">"+
                             "      <div class=\"modal-content\">"+
                             "        <div class=\"modal-header\">"+
-                            "          <h4 class=\"modal-title\">District reconcile</h4>"+
+                            "          <h4 class=\"modal-title\">District: "+e+" (reconciled)</h4>"+
                             "          <button type=\"button\" class=\"close\" data-dismiss=\"modal\">&times;</button>"+
                             "        </div>"+
                             "        <div class=\"modal-body\">"+
