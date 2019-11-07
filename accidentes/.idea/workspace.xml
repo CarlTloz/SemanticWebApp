@@ -85,7 +85,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Application.ConsultaExterna">
+  <component name="RunManager" selected="Tomcat Server.Tomcat 9.0.27">
     <configuration name="App" type="Application" factoryName="Application" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="metodos.App" />
       <module name="accidentes" />
@@ -214,9 +214,9 @@
     <list>
       <item itemvalue="Application.App" />
       <item itemvalue="Application.test" />
-      <item itemvalue="Tomcat Server.Tomcat 9.0.27" />
       <item itemvalue="Application.ExternalQueryMain" />
       <item itemvalue="Application.ConsultaExterna" />
+      <item itemvalue="Tomcat Server.Tomcat 9.0.27" />
     </list>
     <recent_temporary>
       <list>
@@ -242,6 +242,7 @@
       <workItem from="1572904589422" duration="12849000" />
       <workItem from="1572918852966" duration="6178000" />
       <workItem from="1572954448910" duration="45840000" />
+      <workItem from="1573134937770" duration="5381000" />
     </task>
     <servers />
   </component>
