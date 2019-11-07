@@ -1,0 +1,25 @@
+<component name="libraryTable">
+  <library name="com.github.jsonld-java:jsonld-java:0.10.0" type="repository">
+    <properties maven-id="com.github.jsonld-java:jsonld-java:0.10.0" />
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/jsonld-java-0.10.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jackson-core-2.8.6.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jackson-databind-2.8.6.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jackson-annotations-2.8.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/httpclient-osgi-4.5.3.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/httpclient-4.5.3.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/commons-codec-1.9.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/httpmime-4.5.3.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/httpclient-cache-4.5.3.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/fluent-hc-4.5.3.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/httpcore-osgi-4.4.6.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/httpcore-4.4.6.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/httpcore-nio-4.4.6.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/slf4j-api-1.7.23.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jcl-over-slf4j-1.7.23.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/commons-io-2.5.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

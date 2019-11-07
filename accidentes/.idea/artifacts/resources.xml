@@ -1,0 +1,48 @@
+<component name="ArtifactManager">
+  <artifact type="exploded-war" build-on-make="true" name="resources">
+    <output-path>$PROJECT_DIR$/out/artifacts/resources</output-path>
+    <root id="root">
+      <element id="javaee-facet-resources" facet="accidentes/web/Web" />
+      <element id="directory" name="WEB-INF">
+        <element id="directory" name="classes">
+          <element id="module-output" name="accidentes" />
+        </element>
+        <element id="directory" name="lib">
+          <element id="library" level="project" name="com.fasterxml.jackson.core:jackson-annotations:2.8.0" />
+          <element id="library" level="project" name="com.fasterxml.jackson.core:jackson-databind:2.8.6" />
+          <element id="library" level="project" name="com.github.andrewoma.dexx:collection:0.7" />
+          <element id="library" level="project" name="com.github.jsonld-java:jsonld-java:0.10.0" />
+          <element id="library" level="project" name="commons-cli:commons-cli:1.4" />
+          <element id="library" level="project" name="commons-codec:commons-codec:1.9" />
+          <element id="library" level="project" name="commons-io:commons-io:2.5" />
+          <element id="library" level="project" name="jar_files" />
+          <element id="library" level="project" name="junit:junit:3.8.1" />
+          <element id="library" level="project" name="org.apache.commons:commons-csv:1.4" />
+          <element id="library" level="project" name="org.apache.commons:commons-lang3:3.4" />
+          <element id="library" level="project" name="org.apache.httpcomponents:httpclient-cache:4.5.3" />
+          <element id="library" level="project" name="org.apache.httpcomponents:httpclient:4.5.3" />
+          <element id="library" level="project" name="org.apache.httpcomponents:httpcore:4.4.6" />
+          <element id="library" level="project" name="org.apache.jena:jena-arq:3.4.0" />
+          <element id="library" level="project" name="org.apache.jena:jena-arq:3.13.1" />
+          <element id="library" level="project" name="org.apache.jena:jena-base:3.4.0" />
+          <element id="library" level="project" name="org.apache.jena:jena-core:3.4.0" />
+          <element id="library" level="project" name="org.apache.jena:jena-iri:3.4.0" />
+          <element id="library" level="project" name="org.apache.jena:jena-rdfconnection:3.4.0" />
+          <element id="library" level="project" name="org.apache.jena:jena-shaded-guava:3.4.0" />
+          <element id="library" level="project" name="org.apache.jena:jena-tdb:3.4.0" />
+          <element id="library" level="project" name="org.apache.thrift:libthrift:0.9.3" />
+          <element id="library" level="project" name="org.json:json:20190722" />
+          <element id="library" level="project" name="org.slf4j:jcl-over-slf4j:1.7.25" />
+          <element id="library" level="project" name="org.slf4j:slf4j-api:1.7.25" />
+          <element id="library" level="project" name="xerces:xercesImpl:2.11.0" />
+          <element id="library" level="project" name="xml-apis:xml-apis:1.4.01" />
+        </element>
+        <element id="directory" name="resources">
+          <element id="file-copy" path="$PROJECT_DIR$/resources/biciaccidents-with-links.ttl" />
+          <element id="file-copy" path="$PROJECT_DIR$/resources/biciaccidents.rdf" />
+          <element id="file-copy" path="$PROJECT_DIR$/resources/biciaccidents.ttl" />
+        </element>
+      </element>
+    </root>
+  </artifact>
+</component>
