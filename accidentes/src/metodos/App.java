@@ -12,6 +12,7 @@ import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class App {
@@ -25,10 +26,14 @@ public class App {
 
     private Scanner myObj = new Scanner(System.in);
     private Scanner menu = new Scanner(System.in);
+    public ArrayList<ObjectConsulta> consultas = new ArrayList<ObjectConsulta>();
 
-    public String showInfo (String uri, OntModel model) {
+    public ObjectConsulta showInfo (String uri, OntModel model) {
 
-        String res = "<p>Procesando información para la URI " + uri + "</p>";
+        ObjectConsulta consulta = new ObjectConsulta();
+        consulta.setUri(uri);
+
+        //  String res = "<p>Procesando información para la URI " + uri + "</p>";
 
         String queryInfo =
                 "PREFIX ns:   " + ns + "\n" +
@@ -56,7 +61,7 @@ public class App {
         ResultSet results = qe.execSelect();
 
         // Output query results
-        //ResultSetFormatter.out(System.out, results, query);
+        //ResultSetFormatter.out(//System.out, results, query);
 
         // write to a ByteArrayOutputStream
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -107,46 +112,38 @@ public class App {
 
         String typeA = sparqlTypeA.getString("value");
 
-        /*System.out.println(jsonObject);
-        System.out.println(sparqlResults);
-        System.out.println(sparqlBindings);
-        System.out.println(sparqlBindingsIndex);*/
 
-        /*System.out.println("Expedient: " + expedient);
-        System.out.println("Date: " + date);
-        System.out.println("Street: " + street);
-        System.out.println("District: " + district);
-        System.out.println("Wikidata District: " + wikidata.substring(30));
-        System.out.println("Injury Status: " + injury);
-        System.out.println("Weather Condition: " + weather);
-        System.out.println("Type Accident: " + typeA);*/
 
 
         // Important ‑ free up resources used running the query
         qe.close();
-        return  "<table> <tr><th>" +res +"</th></tr>"+
-                "<tr><td>Expedient: " + expedient+ "</td></tr>" +
-                "<tr><td>Date: " + date + "</td></tr>"+
-                "<tr><td>Street: " + street + "</td></tr>"+
-                "<tr><td>District: " + district + "</td></tr>"+
-                "<tr><td>Wikidata District: " + wikidata.substring(30) + "</td></tr>"+
-                "<tr><td>Injury Status: " + injury+ "</td></tr>"+
-                "<tr><td>Weather Condition: " + weather+ "</td></tr>"+
-                "<tr><td>Type Accident: " + typeA+ "</td></tr></table>";
-        //https://stackoverflow.com/questions/6856120/building-html-in-java-code-only
-        /*StringBuilder htmlBuilder = new StringBuilder();
-        htmlBuilder.append("<html>");
-        htmlBuilder.append("<head><title>Hello World</title></head>");
-        htmlBuilder.append("<body><p>Look at my body!</p></body>");
-        htmlBuilder.append("</html>");
-        String html = htmlBuilder.toString();*/
+
+
+        consulta.setExpedient(expedient);
+        consulta.setDate(date);
+        consulta.setSteet(street);
+        consulta.setDistrict(district);
+        consulta.setWikidataDistrict(wikidata.substring(30));
+        consulta.setInjuryStatus(injury);
+        consulta.setWeatherCondition(weather);
+        consulta.setTypeAccident(typeA);
+        //System.out.println("Expedient: " + expedient);
+        //System.out.println("Date: " + date);
+        //System.out.println("Street: " + street);
+        //System.out.println("District: " + district);
+        //System.out.println("Wikidata District: " + wikidata.substring(30));
+        //System.out.println("Injury Status: " + injury);
+        //System.out.println("Weather Condition: " + weather);
+        //System.out.println("Type Accident: " + typeA);
+        return consulta;
+
     }
 
     public String streetAccidents (OntModel model,String tipo_busqueda) {
 
         // Create a new query 1. Accidentes por calle
 
-        System.out.println("Escriba el nombre de la calle a buscar");
+        //System.out.println("Escriba el nombre de la calle a buscar");
 
         // String calle = myObj.nextLine();
         //String calle = "Call.Castello-Call.DonRamonDeLaCruz";
@@ -161,13 +158,13 @@ public class App {
                         "}";
 
         Query query = QueryFactory.create(queryString);
-
+        //System.out.println(queryString);
         // Execute the query and obtain results
         QueryExecution qe = QueryExecutionFactory.create(query, model);
         ResultSet results = qe.execSelect();
 
         // Output query results
-        //ResultSetFormatter.out(System.out, results, query);
+        //ResultSetFormatter.out(//System.out, results, query);
 
         // write to a ByteArrayOutputStream
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -183,7 +180,9 @@ public class App {
         JSONObject sparqlResults = jsonObject.getJSONObject("results");
 
         JSONArray sparqlBindings = sparqlResults.getJSONArray("bindings");
+        this.consultas = new ArrayList<ObjectConsulta>();
         String res = "";
+        //System.out.println("ok distrito");
         for (int i = 0; i<sparqlBindings.length(); i++) {
 
             JSONObject sparqlBindingsIndex = sparqlBindings.getJSONObject(i);
@@ -192,28 +191,20 @@ public class App {
 
             String uri = sparqlAccident.getString("value");
 
-            res = res+ "\n" + showInfo(uri, model);
+            consultas.add( showInfo(uri, model));
+            //System.out.println("District" + i);
 
-            /*System.out.println(jsonObject);
-            System.out.println(sparqlResults);
-            System.out.println(sparqlBindings);
-            System.out.println(sparqlBindingsIndex);
-            System.out.println(sparqlAccident);
-            System.out.println(sparqlValue);*/
         }
 
-        // Important ‑ free up resources used running the query
         qe.close();
         return res;
     }
 
-    public void neighborhoodAccidents (OntModel model) {
+    public void neighborhoodAccidents (OntModel model, String distrito) {
 
         // Create a new query 2. Accidentes por distrito
 
-        System.out.println("Escriba el nombre del distrito a buscar");
-
-        String distrito = myObj.nextLine();
+        //System.out.println("Escriba el nombre del distrito a buscar");
 
         String queryString =
                 "PREFIX ns:   " + ns + "\n" +
@@ -225,7 +216,7 @@ public class App {
                         "    ?uri a ns:neighborhood .\n" +
                         "    ?uri rdfs:label \"" + distrito + "\" .\n" +
                         "}";
-
+        //System.out.println(queryString);
         Query query = QueryFactory.create(queryString);
 
         // Execute the query and obtain results
@@ -233,7 +224,7 @@ public class App {
         ResultSet results = qe.execSelect();
 
         // Output query results
-        //ResultSetFormatter.out(System.out, results, query);
+        //ResultSetFormatter.out(//System.out, results, query);
 
         // write to a ByteArrayOutputStream
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -250,6 +241,9 @@ public class App {
 
         JSONArray sparqlBindings = sparqlResults.getJSONArray("bindings");
 
+
+        //System.out.println("DDDDDDDDDDDDD START" );
+
         for (int i = 0; i<sparqlBindings.length(); i++) {
 
             JSONObject sparqlBindingsIndex = sparqlBindings.getJSONObject(i);
@@ -258,27 +252,21 @@ public class App {
 
             String uri = sparqlAccident.getString("value");
 
-            showInfo(uri, model);
-
-            /*System.out.println(jsonObject);
-            System.out.println(sparqlResults);
-            System.out.println(sparqlBindings);
-            System.out.println(sparqlBindingsIndex);
-            System.out.println(sparqlAccident);
-            System.out.println(sparqlValue);*/
+            consultas.add(showInfo(uri, model));
+            //System.out.println("DDDDDDDDDDDDD" + i);
         }
-
+        //System.out.println("DDDDDDDDDDDDD FIN" );
         // Important ‑ free up resources used running the query
         qe.close();
     }
 
-    public void weatherAccidents (OntModel model) {
+    public void weatherAccidents (OntModel model,String weather) {
 
         // Create a new query 3. Accidentes por clima
 
-        System.out.println("Escriba el tiempo meteorologico a buscar");
+        //System.out.println("Escriba el tiempo meteorologico a buscar");
 
-        String weather = myObj.nextLine();
+      //  String weather = myObj.nextLine();
 
         String queryString =
                 "PREFIX ns:   " + ns + "\n" +
@@ -294,7 +282,7 @@ public class App {
         ResultSet results = qe.execSelect();
 
         // Output query results
-        //ResultSetFormatter.out(System.out, results, query);
+        //ResultSetFormatter.out(//System.out, results, query);
 
         // write to a ByteArrayOutputStream
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -306,40 +294,30 @@ public class App {
 
         //Now convert to JSONObject
         JSONObject jsonObject = new JSONObject(json);
-
         JSONObject sparqlResults = jsonObject.getJSONObject("results");
-
         JSONArray sparqlBindings = sparqlResults.getJSONArray("bindings");
-
+        
+        this.consultas = new ArrayList<ObjectConsulta>();
         for (int i = 0; i<sparqlBindings.length(); i++) {
 
             JSONObject sparqlBindingsIndex = sparqlBindings.getJSONObject(i);
-
             JSONObject sparqlAccident = sparqlBindingsIndex.getJSONObject("accident");
-
             String uri = sparqlAccident.getString("value");
+            this.consultas.add( showInfo(uri, model));
 
-            showInfo(uri, model);
-
-            /*System.out.println(jsonObject);
-            System.out.println(sparqlResults);
-            System.out.println(sparqlBindings);
-            System.out.println(sparqlBindingsIndex);
-            System.out.println(sparqlAccident);
-            System.out.println(sparqlValue);*/
         }
 
         // Important ‑ free up resources used running the query
         qe.close();
     }
 
-    public void injuryAccidents (OntModel model) {
+    public void injuryAccidents (OntModel model, String lesividad) {
 
         // Create a new query 4. Accidentes por grado de lesividad
 
-        System.out.println("Escriba la lesividad a buscar");
+        //System.out.println("Escriba la lesividad a buscar");
 
-        String lesividad = myObj.nextLine();
+       // String lesividad = myObj.nextLine();
 
         String queryString =
                 "PREFIX ns:   " + ns + "\n" +
@@ -355,7 +333,7 @@ public class App {
         ResultSet results = qe.execSelect();
 
         // Output query results
-        //ResultSetFormatter.out(System.out, results, query);
+        //ResultSetFormatter.out(//System.out, results, query);
 
         // write to a ByteArrayOutputStream
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -380,27 +358,20 @@ public class App {
 
             String uri = sparqlAccident.getString("value");
 
-            showInfo(uri, model);
-
-            /*System.out.println(jsonObject);
-            System.out.println(sparqlResults);
-            System.out.println(sparqlBindings);
-            System.out.println(sparqlBindingsIndex);
-            System.out.println(sparqlAccident);
-            System.out.println(sparqlValue);*/
+           consultas.add( showInfo(uri, model));
         }
 
         // Important ‑ free up resources used running the query
         qe.close();
     }
 
-    public void typeAccidents (OntModel model) {
+    public void typeAccidents(OntModel model, String typeA) {
 
         // Create a new query 5. Accidentes por tipo de accidente
 
-        System.out.println("Escriba el tipo de accidente a buscar");
+        //System.out.println("Escriba el tipo de accidente a buscar");
 
-        String typeA = myObj.nextLine();
+        //String typeA = myObj.nextLine();
 
         String queryString =
                 "PREFIX ns:   " + ns + "\n" +
@@ -416,7 +387,7 @@ public class App {
         ResultSet results = qe.execSelect();
 
         // Output query results
-        //ResultSetFormatter.out(System.out, results, query);
+        //ResultSetFormatter.out(//System.out, results, query);
 
         // write to a ByteArrayOutputStream
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -432,7 +403,7 @@ public class App {
         JSONObject sparqlResults = jsonObject.getJSONObject("results");
 
         JSONArray sparqlBindings = sparqlResults.getJSONArray("bindings");
-
+        this.consultas = new ArrayList<ObjectConsulta>();
         for (int i = 0; i<sparqlBindings.length(); i++) {
 
             JSONObject sparqlBindingsIndex = sparqlBindings.getJSONObject(i);
@@ -441,38 +412,28 @@ public class App {
 
             String uri = sparqlAccident.getString("value");
 
-            showInfo(uri, model);
-
-            /*System.out.println(jsonObject);
-            System.out.println(sparqlResults);
-            System.out.println(sparqlBindings);
-            System.out.println(sparqlBindingsIndex);
-            System.out.println(sparqlAccident);
-            System.out.println(sparqlValue);*/
+            consultas.add(showInfo(uri, model));
         }
 
         // Important ‑ free up resources used running the query
         qe.close();
     }
 
-    public void monthAccidents (OntModel model) {
+    public void monthAccidents (OntModel model,String mes) {
 
         // Create a new query 6. Accidentes por mes
 
-        System.out.println("Escriba el mes a buscar");
-
-        String mes = myObj.nextLine();
+        System.out.println("Escriba la fecha a buscar");
 
         String queryString =
-                "PREFIX ns:   " + ns + "\n" +
-                        "PREFIX xsd:   " + xsd + "\n" +
-                        "SELECT ?accident\n" +
+                "PREFIX ns:   <http://biciaccident.es/ontology#>\n" +
+                        "PREFIX xsd:   <http://www.w3.org/2001/XMLSchema#>\n" +
+                        "SELECT ?accident \n" +
                         "WHERE {\n" +
                         "      ?accident a ns:Accident .\n" +
                         "      ?accident ns:date ?date .\n" +
-                        "      FILTER (?date >= \"2019-" + mes + "-01T00:00Z\"^^xsd:dateTime && " +
-                        "?date < \"2019-" + mes + "-30T23:59ZZ\"^^xsd:dateTime)\n" +
-                        "      }";
+                        "      FILTER (?date = \"" + mes + "\"^^xsd:dateTime ) .\n" +
+                        "}";
 
         System.out.println(queryString);
 
@@ -506,7 +467,6 @@ public class App {
         JSONObject sparqlResults = jsonObject.getJSONObject("results");
 
         JSONArray sparqlBindings = sparqlResults.getJSONArray("bindings");
-
         for (int i = 0; i<sparqlBindings.length(); i++) {
 
             JSONObject sparqlBindingsIndex = sparqlBindings.getJSONObject(i);
@@ -515,37 +475,69 @@ public class App {
 
             String uri = sparqlAccident.getString("value");
 
-            showInfo(uri, model);
+            consultas.add(showInfo(uri, model));
+        }
 
-            /*System.out.println(jsonObject);
-            System.out.println(sparqlResults);
-            System.out.println(sparqlBindings);
-            System.out.println(sparqlBindingsIndex);
-            System.out.println(sparqlAccident);
-            System.out.println(sparqlValue);*/
+        // Important ‑ free up resources used running the query
+        qe.close();
+    }
+    public void idAccidents(OntModel model, String typeA) {
+
+        // Create a new query 5. Accidentes por tipo de accidente
+
+        System.out.println("Escriba el ID de accidente a buscar");
+
+        //String typeA = myObj.nextLine();
+
+     String queryString =
+                "PREFIX ns:   <http://biciaccident.es/ontology#>\n" +
+                        "PREFIX xsd:   <http://www.w3.org/2001/XMLSchema#>\n" +
+                        "SELECT ?accident ?date \n" +
+                        "WHERE {\n" +
+                        "      ?accident a ns:Accident .\n" +
+                        "      ?accident ns:expedient \"" + typeA + "\" .\n" +
+                        "}";
+
+        Query query = QueryFactory.create(queryString);
+
+        // Execute the query and obtain results
+        QueryExecution qe = QueryExecutionFactory.create(query, model);
+        ResultSet results = qe.execSelect();
+
+        // Output query results
+        //ResultSetFormatter.out(//System.out, results, query);
+
+        // write to a ByteArrayOutputStream
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+
+        ResultSetFormatter.outputAsJSON(outputStream, results);
+
+        // and turn that into a String
+        String json = new String(outputStream.toByteArray());
+
+        //Now convert to JSONObject
+        JSONObject jsonObject = new JSONObject(json);
+
+        JSONObject sparqlResults = jsonObject.getJSONObject("results");
+
+        JSONArray sparqlBindings = sparqlResults.getJSONArray("bindings");
+        this.consultas = new ArrayList<ObjectConsulta>();
+        for (int i = 0; i<sparqlBindings.length(); i++) {
+
+            JSONObject sparqlBindingsIndex = sparqlBindings.getJSONObject(i);
+
+            JSONObject sparqlAccident = sparqlBindingsIndex.getJSONObject("accident");
+
+            String uri = sparqlAccident.getString("value");
+
+            consultas.add(showInfo(uri, model));
         }
 
         // Important ‑ free up resources used running the query
         qe.close();
     }
 
-    public int menu () {
-
-        System.out.println("\nIndique la operación ha realizar, por favor :D\n");
-
-        System.out.println("1. Accidentes por calle\n" +
-                "2. Accidentes por distrito\n" +
-                "3. Accidentes por clima\n" +
-                "4. Accidentes por grado de lesividad\n" +
-                "5. Accidentes por tipo de accidente\n" +
-                "6. Accidentes por mes\n" +
-                "7. Salir");
-
-        int op = menu.nextInt();
-
-        return op;
-    }
-    public  String toString(String name_file,String tipo_busqueda) throws IllegalArgumentException {
+    public  String toString(String name_file,String cadena_a_buscar,String tipo_busqueda,boolean id) throws IllegalArgumentException {
 
         //Resource file (cuidado con el ttl que no lo deja abrir, por lo que veo tiene que ser rdf/xml por temas de la codificacion)
         String filename = name_file;
@@ -562,54 +554,32 @@ public class App {
         // Read the RDF/XML file
         //model.read(in, null);
         model.read(filename,null,"TTL");
-        String res = streetAccidents(model,tipo_busqueda);
+        String res ="";
+        if(id) {
+            System.out.println("pasa");
+            idAccidents(model,cadena_a_buscar);
+            System.out.println("acaba");
+            return res;
+        }
+
+        if("street".compareTo(tipo_busqueda)==0){
+            streetAccidents(model,cadena_a_buscar);
+        }else if ("weather".compareTo(tipo_busqueda)==0) {
+             weatherAccidents(model,cadena_a_buscar);
+        }else if ("lesivity".compareTo(tipo_busqueda)==0) {
+            this.injuryAccidents(model,cadena_a_buscar);
+        }else if ("accident".compareTo(tipo_busqueda)==0) {
+            this.typeAccidents(model,cadena_a_buscar);
+        }else if ("date".compareTo(tipo_busqueda)==0) {
+            this.monthAccidents(model,cadena_a_buscar);
+        }else if ("district".compareTo(tipo_busqueda)==0) {
+            this.neighborhoodAccidents(model,cadena_a_buscar);
+        }
 
         return res;
 
     }
 
-  /*  public static void main(String[] args) {
-
-        App test = new App();
-
-        boolean runeo = true;
-
-        while (runeo) {
-
-            int op = test.menu();
-
-            System.out.println("op " + op);
-
-            switch (op) {
-                case 1:
-                    test.streetAccidents(model);
-                    break;
-                case 2:
-                    test.neighborhoodAccidents(model);
-                    break;
-                case 3:
-                    test.weatherAccidents(model);
-                    break;
-                case 4:
-                    test.injuryAccidents(model);
-                    break;
-                case 5:
-                    test.typeAccidents(model);
-                    break;
-                case 6:
-                    test.monthAccidents(model);
-                    break;
-                case 7:
-                    runeo = false;
-                    System.out.println("Saliendo... Hasta la proxima :D");
-                    break;
-                default:
-                    System.out.println("Operación errónea\n");
-                    break;
-            }
-        }
-
-    }*/
 
 
 }
